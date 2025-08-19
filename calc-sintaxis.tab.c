@@ -114,10 +114,11 @@
 /* Copy the first part of user declarations.  */
 #line 1 "calc-sintaxis.y"
 
-
 #include <stdlib.h>
 #include <stdio.h>
 
+extern int yylex(void);
+extern void yyerror(const char *s);
 
 
 /* Enabling traces.  */
@@ -151,7 +152,7 @@ typedef int YYSTYPE;
 
 
 /* Line 216 of yacc.c.  */
-#line 155 "calc-sintaxis.tab.c"
+#line 156 "calc-sintaxis.tab.c"
 
 #ifdef short
 # undef short
@@ -436,16 +437,16 @@ static const yytype_int8 yyrhs[] =
       28,    21,    27,    -1,     7,    -1,     7,    16,    31,    -1,
        3,    -1,     4,    -1,     7,    16,    31,    18,    -1,     6,
       31,    18,    -1,     6,     7,    18,    -1,     6,    18,    -1,
-      31,     9,    31,    -1,    31,    17,    31,    -1,    31,     8,
+      31,     9,    31,    -1,    31,     8,    31,    -1,    31,    17,
       31,    -1,    10,    31,    11,    -1,     7,    -1,    19,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    34,    34,    37,    38,    39,    42,    43,    44,    47,
-      50,    51,    54,    55,    58,    59,    62,    63,    64,    65,
-      68,    69,    70,    71,    72,    73
+       0,    17,    17,    20,    21,    22,    25,    26,    27,    30,
+      33,    34,    37,    38,    41,    42,    45,    46,    47,    48,
+      51,    52,    53,    54,    55,    56
 };
 #endif
 
@@ -497,7 +498,7 @@ static const yytype_uint8 yydefact[] =
        6,    14,    15,     0,     0,     0,     6,     0,     6,    24,
        0,    19,    25,     0,     0,     2,     7,    12,     0,    10,
        8,    18,    24,     0,     0,     0,     0,    17,     0,     0,
-       9,     0,    23,    22,    20,    21,    16,    13,    11
+       9,     0,    23,    21,    20,    22,    16,    13,    11
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
@@ -1372,13 +1373,13 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 34 "calc-sintaxis.y"
-    { printf("No hay errores \n"); ;}
+#line 17 "calc-sintaxis.y"
+    { printf("No hay errores\n"); ;}
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 1382 "calc-sintaxis.tab.c"
+#line 1383 "calc-sintaxis.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1592,8 +1593,17 @@ yyreturn:
 }
 
 
-#line 76 "calc-sintaxis.y"
+#line 59 "calc-sintaxis.y"
 
 
+int main(int argc, char *argv[]) {
+    extern FILE *yyin;
+    ++argv, --argc;
+    if (argc > 0)
+        yyin = fopen(argv[0], "r");
+    else
+        yyin = stdin;
 
-
+    yyparse();
+    return 0;
+}
