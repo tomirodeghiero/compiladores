@@ -28,12 +28,11 @@ typedef enum {
     TOP_MENOR
 } TipoOP;
 
-typedef struct Nodo {
+struct Nodo {
     TipoNodo tipo;
-
     union {
         int val_int;
-        int val_bool; // 0-1
+        int val_bool;
         char *nombre;
 
         struct {
@@ -49,7 +48,7 @@ typedef struct Nodo {
 
         struct Nodo *ret_expr;
     };
-} Nodo;
+};
 
 Nodo *nodo_ID(char *nombre);
 Nodo *nodo_int(int val_int);

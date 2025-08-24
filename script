@@ -2,6 +2,6 @@
 
 flex calc-lexico.l 
 bison -d calc-sintaxis.y
-gcc lex.yy.c calc-sintaxis.tab.c -o calc
+gcc -o calc calc-sintaxis.tab.c lex.yy.c ast.c -lfl
 
 ./calc input.txt

@@ -4,6 +4,10 @@
 #include "ast.h"
 
 Nodo *nodo_ID(char *nombre) {
+    if (!nombre) {
+        fprintf(stderr, "Error: nodo_ID recibió nombre NULL\n");
+        exit(1);
+    }
     Nodo *n = malloc(sizeof(Nodo));
     if (!n) { perror("malloc"); exit(1); }
 
@@ -46,6 +50,14 @@ Nodo *nodo_opBin(TipoOP op, Nodo *izq, Nodo *der) {
 }
 
 Nodo *nodo_assign(char *id, Nodo *expr) {
+    if (!id) {
+        fprintf(stderr, "Error: nodo_assign recibió id NULL\n");
+        exit(1);
+    }
+    if (!expr) {
+        fprintf(stderr, "Error: nodo_assign recibió expr NULL\n");
+        exit(1);
+    }
     Nodo *n = malloc(sizeof(Nodo));
     if (!n) { perror("malloc"); exit(1); }
 
@@ -81,18 +93,12 @@ void nodo_libre(Nodo *n) {
         case NODO_RETURN:
             nodo_libre(n->ret_expr);
             break;
-        case NODO_PROG:
-        case NODO_DECL:
-        case NODO_SENT:
-        case NODO_INT:
-        case NODO_BOOL:
+        case NODO_ID:
+            free(n->nombre);
+            break;
+        default:
             break;
     }
-
-    if ((n->tipo == NODO_PROG || n->tipo == NODO_DECL || n->tipo == NODO_SENT) && n->nombre) {
-        free(n->nombre);
-    }
-
     free(n);
 }
 
@@ -117,22 +123,19 @@ void imprimir_nodo(Nodo *n, int ind) {
             imprimir_nodo(n->ret_expr, ind + 1);
             break;
         case NODO_OP: {
-            const char *ops[] = {
-                "+", "-", "*", "/", "=", "==", "||", "&&", ">", "<"
-            };
-            printf("OP(%s)\n", ops[n->opBinaria.op]);
+            const char *ops[] = { "+", "-", "*", "/", "=", "==", "||", "&&", ">", "<" };
+            int idx = n->opBinaria.op;
+            if (idx < 0 || idx >= (int)(sizeof(ops)/sizeof(ops[0]))) {
+                printf("OP(INVALID %d)\n", idx);
+            } else {
+                printf("OP(%s)\n", ops[idx]);
+            }
             imprimir_nodo(n->opBinaria.izq, ind + 1);
             imprimir_nodo(n->opBinaria.der, ind + 1);
             break;
         }
-        case NODO_PROG:
-            printf("PROG(%s)\n", n->nombre ? n->nombre : "");
-            break;
-        case NODO_DECL:
-            printf("DECL(%s)\n", n->nombre ? n->nombre : "");
-            break;
-        case NODO_SENT:
-            printf("SENT(%s)\n", n->nombre ? n->nombre : "");
-            break;
+        case NODO_PROG:  printf("PROG\n"); break;
+        case NODO_DECL:  printf("DECL\n"); break;
+        case NODO_SENT:  printf("SENT\n"); break;
     }
 }
