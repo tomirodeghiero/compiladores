@@ -1,6 +1,8 @@
 #ifndef AST_H
 #define AST_H
 
+typedef struct Nodo Nodo;
+
 typedef enum {
     NODO_PROG,
     NODO_DECL,
@@ -9,27 +11,27 @@ typedef enum {
     NODO_RETURN,
     NODO_OP,
     NODO_INT,
-    NODO_BOOL
+    NODO_BOOL,
+    NODO_ID
 } TipoNodo;
 
 typedef enum {
-    OP_SUMA,
-    OP_RESTA,
-    OP_MULT,
-    OP_DIV,
-    OP_ASSIGN,
-    OP_IGUAL,
-    OP_OR,
-    OP_AND,
-    OP_MAYOR,
-    OP_MENOR
+    TOP_SUMA,
+    TOP_RESTA,
+    TOP_MULT,
+    TOP_DIV,
+    TOP_ASSIGN,
+    TOP_IGUAL,
+    TOP_OR,
+    TOP_AND,
+    TOP_MAYOR,
+    TOP_MENOR
 } TipoOP;
 
 typedef struct Nodo {
     TipoNodo tipo;
 
     union {
-        int *id;
         int val_int;
         int val_bool; // 0-1
         char *nombre;
@@ -49,7 +51,7 @@ typedef struct Nodo {
     };
 } Nodo;
 
-Nodo *nodo_ID(char *name);
+Nodo *nodo_ID(char *nombre);
 Nodo *nodo_int(int val_int);
 Nodo *nodo_bool(int val_bool);
 Nodo *nodo_opBin(TipoOP op, Nodo *izq, Nodo *der);

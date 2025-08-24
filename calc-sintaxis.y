@@ -1,13 +1,29 @@
+%code requires {
+    #include "ast.h"
+}
+
 %{
 #include <stdlib.h>
 #include <stdio.h>
+#include "ast.h"
 
 extern int yylex(void);
 extern void yyerror(const char *s);
 %}
 
-%token INT BOOL VOID RETURN ID OP_RESTA OP_SUMA PARA PARC LLAA LLAC CORA CORC OP_IGUAL OP_MULT PYC NUMERO MAIN COMA
-%token OP_MAYOR OP_MENOR OP_AND OP_OR OP_DIV TRUE FALSE OP_ASIGN
+%union {
+    Nodo *nodo;
+    char *str;
+    int num;
+}
+
+%token <str> ID;
+%token <num> NUMERO;
+%token INT BOOL VOID TRUE FALSE RETURN MAIN 
+%token PARA PARC LLAA LLAC CORA CORC PYC COMA
+%token OP_RESTA OP_SUMA OP_MAYOR OP_MENOR OP_AND OP_OR OP_DIV OP_MULT OP_IGUAL OP_ASIGN
+
+%type <nodo> prog CODIGO SENTENCIA E EB
 
 %left OP_OR
 %left OP_AND
@@ -17,17 +33,20 @@ extern void yyerror(const char *s);
 
 %%
 
-prog: TIPOM MAIN PARA PARC LLAA CODIGO LLAC { printf("No hay errores\n"); }
-    ;
+prog: TIPOM MAIN PARA PARC LLAA CODIGO LLAC { 
+        printf("No hay errores\n"); 
+        imprimir_nodo($6, 0);
+        nodo_libre($6);
+    };
 
 TIPOM: INT
     | BOOL
     | VOID
     ;
 
-CODIGO: /* empty */
-    | DECLARACION CODIGO
-    | SENTENCIA CODIGO
+CODIGO: /* empty */         { $$ = NULL; }
+    | DECLARACION CODIGO    { $$ = $2; }
+    | SENTENCIA CODIGO      { $$ = $1; }
     ;
 
 DECLARACION: TIPO VARS PYC
@@ -46,30 +65,30 @@ TIPO: INT
     | BOOL
     ;
 
-SENTENCIA: ID OP_ASIGN E PYC
-    | ID OP_ASIGN EB PYC
-    | RETURN PYC
-    | RETURN E PYC
-    | RETURN EB PYC
+SENTENCIA: ID OP_ASIGN E PYC    { $$ = nodo_assign($1, $3); }
+    | ID OP_ASIGN EB PYC        { $$ = nodo_assign($1, $3); }
+    | RETURN PYC                { $$ = nodo_return(NULL); }
+    | RETURN E PYC              { $$ = nodo_return($2); }
+    | RETURN EB PYC             { $$ = nodo_return($2); }
     ;
 
-E: E OP_SUMA E
-    | E OP_RESTA E
-    | E OP_MULT E
-    | E OP_DIV E
-    | PARA E PARC
-    | ID
-    | NUMERO
+E: E OP_SUMA E          { $$ = nodo_opBin(TOP_SUMA, $1, $3); }
+    | E OP_RESTA E      { $$ = nodo_opBin(TOP_RESTA, $1, $3); }
+    | E OP_MULT E       { $$ = nodo_opBin(TOP_MULT, $1, $3); }
+    | E OP_DIV E        { $$ = nodo_opBin(TOP_DIV, $1, $3); }
+    | PARA E PARC       { $$ = $2; }
+    | ID                { $$ = nodo_ID($1); }
+    | NUMERO            { $$ = nodo_int($1); }
     ;
 
-EB: EB OP_OR EB
-    | EB OP_AND EB
-    | E OP_IGUAL E
-    | E OP_MAYOR E
-    | E OP_MENOR E
-    | PARA EB PARC
-    | TRUE
-    | FALSE
+EB: EB OP_OR EB         { $$ = nodo_opBin(TOP_OR, $1, $3); }
+    | EB OP_AND EB      { $$ = nodo_opBin(TOP_AND, $1, $3); }
+    | E OP_IGUAL E      { $$ = nodo_opBin(TOP_IGUAL, $1, $3); }
+    | E OP_MAYOR E      { $$ = nodo_opBin(TOP_MAYOR, $1, $3); }
+    | E OP_MENOR E      { $$ = nodo_opBin(TOP_MENOR, $1, $3); }
+    | PARA EB PARC      { $$ = $2; }
+    | TRUE              { $$ = nodo_bool(1); }
+    | FALSE             { $$ = nodo_bool(0); }
     ;
 
 %%

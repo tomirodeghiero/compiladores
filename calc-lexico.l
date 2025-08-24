@@ -29,8 +29,8 @@ id {letra}({letra}|{digito})*
 "true"                  { printf("TRUE : %s\n", yytext); return TRUE; }
 "false"                 { printf("FALSE : %s\n", yytext); return FALSE; }
 {id}                    { printf("ID : %s\n", yytext); return ID; }
-"-"                     { printf("MENOS : %s\n", yytext); return OP_RESTA; }
-"+"                     { printf("MAS : %s\n", yytext); return OP_SUMA; }
+"-"                     { printf("RESTA : %s\n", yytext); return OP_RESTA; }
+"+"                     { printf("SUMA : %s\n", yytext); return OP_SUMA; }
 "("                     { printf("PARA : %s\n", yytext); return PARA; }
 ")"                     { printf("PARC : %s\n", yytext); return PARC; }
 "{"                     { printf("LLAA : %s\n", yytext); return LLAA; }

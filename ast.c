@@ -7,7 +7,7 @@ Nodo *nodo_ID(char *nombre) {
     Nodo *n = malloc(sizeof(Nodo));
     if (!n) { perror("malloc"); exit(1); }
 
-    n->tipo = NODO_PROG;
+    n->tipo = NODO_ID;
     n->nombre = strdup(nombre);
 
     return n;
@@ -28,7 +28,7 @@ Nodo *nodo_bool(int val_bool) {
     if (!n) { perror("malloc"); exit(1); }
 
     n->tipo = NODO_BOOL;
-    n->val_int = val_bool;
+    n->val_bool = val_bool;
 
     return n;
 }
@@ -50,7 +50,7 @@ Nodo *nodo_assign(char *id, Nodo *expr) {
     if (!n) { perror("malloc"); exit(1); }
 
     n->tipo = NODO_ASSIGN;
-    n->assign.id = id;
+    n->assign.id = strdup(id);
     n->assign.expr = expr;
 
     return n;
@@ -66,20 +66,20 @@ Nodo *nodo_return(Nodo *expr) {
     return n;
 }
 
-void nodoLibre(Nodo *n) {
+void nodo_libre(Nodo *n) {
     if (!n) return;
 
     switch (n->tipo) {
         case NODO_OP:
-            nodoLibre(n->opBinaria.izq);
-            nodoLibre(n->opBinaria.der);
+            nodo_libre(n->opBinaria.izq);
+            nodo_libre(n->opBinaria.der);
             break;
         case NODO_ASSIGN:
             free(n->assign.id);
-            nodoLibre(n->assign.expr);
+            nodo_libre(n->assign.expr);
             break;
         case NODO_RETURN:
-            nodoLibre(n->ret_expr);
+            nodo_libre(n->ret_expr);
             break;
         case NODO_PROG:
         case NODO_DECL:
@@ -89,21 +89,17 @@ void nodoLibre(Nodo *n) {
             break;
     }
 
-    if (n->tipo == NODO_PROG || n->tipo == NODO_DECL || n->tipo == NODO_SENT) {
-        if (n->nombre) free(n->nombre);
+    if ((n->tipo == NODO_PROG || n->tipo == NODO_DECL || n->tipo == NODO_SENT) && n->nombre) {
+        free(n->nombre);
     }
 
     free(n);
 }
 
-static void print_indent(int n) {
-    for (int i = 0; i < n; i++) printf("  ");
-}
-
-void imprimirNodo(Nodo *n, int ind) {
+void imprimir_nodo(Nodo *n, int ind) {
     if (!n) return;
 
-    print_indent(ind);
+    for (int i = 0; i < ind; i++) printf("  ");
 
     switch (n->tipo) {
         case NODO_INT:
@@ -114,19 +110,19 @@ void imprimirNodo(Nodo *n, int ind) {
             break;
         case NODO_ASSIGN:
             printf("ASSIGN(%s)\n", n->assign.id);
-            imprimirNodo(n->assign.expr, ind + 1);
+            imprimir_nodo(n->assign.expr, ind + 1);
             break;
         case NODO_RETURN:
             printf("RETURN\n");
-            imprimirNodo(n->ret_expr, ind + 1);
+            imprimir_nodo(n->ret_expr, ind + 1);
             break;
         case NODO_OP: {
             const char *ops[] = {
                 "+", "-", "*", "/", "=", "==", "||", "&&", ">", "<"
             };
             printf("OP(%s)\n", ops[n->opBinaria.op]);
-            imprimirNodo(n->opBinaria.izq, ind + 1);
-            imprimirNodo(n->opBinaria.der, ind + 1);
+            imprimir_nodo(n->opBinaria.izq, ind + 1);
+            imprimir_nodo(n->opBinaria.der, ind + 1);
             break;
         }
         case NODO_PROG:
