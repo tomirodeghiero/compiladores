@@ -134,8 +134,20 @@ void imprimir_nodo(Nodo *n, int ind) {
             imprimir_nodo(n->opBinaria.der, ind + 1);
             break;
         }
-        case NODO_PROG:  printf("PROG\n"); break;
-        case NODO_DECL:  printf("DECL\n"); break;
-        case NODO_SENT:  printf("SENT\n"); break;
+        case NODO_PROG:
+            printf("PROG\n");
+            break;
+        case NODO_DECL:
+            printf("DECL\n");
+            break;
+        case NODO_SENT:
+            printf("SENT\n");
+            break;
+        case NODO_ID:
+            printf("ID(%s)\n", n->nombre);
+            break;
+        default:
+            printf("UNKNOWN(%d)\n", n->tipo);
+            break;
     }
 }

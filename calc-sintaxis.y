@@ -5,7 +5,6 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
-#include "ast.h"
 
 extern int yylex(void);
 extern void yyerror(const char *s);
