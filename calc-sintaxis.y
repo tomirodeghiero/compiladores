@@ -22,20 +22,20 @@ extern void yyerror(const char *s);
 %token PARA PARC LLAA LLAC CORA CORC PYC COMA
 %token OP_RESTA OP_SUMA OP_MAYOR OP_MENOR OP_AND OP_OR OP_DIV OP_MULT OP_IGUAL OP_ASIGN
 
-%type <nodo> prog CODIGO SENTENCIA E EB
+%type <nodo> prog CODIGO SENTENCIA E EB DECLARACION VAR VARS TIPO
 
 %left OP_OR
 %left OP_AND
-%nonassoc OP_IGUAL OP_MAYOR OP_MENOR
 %left OP_SUMA OP_RESTA
 %left OP_MULT OP_DIV
 
 %%
 
 prog: TIPOM MAIN PARA PARC LLAA CODIGO LLAC {
-        printf("No hay errores\n");
         imprimir_nodo($6, 0);
+        exportar_dot($6, "ast_tree");
         nodo_libre($6);
+        printf("No hay errores\n");
     };
 
 TIPOM: INT
@@ -43,28 +43,40 @@ TIPOM: INT
      | VOID
      ;
 
-CODIGO: /* vacío */        { $$ = NULL; }
-      | DECLARACION CODIGO { $$ = $2; }
-      | SENTENCIA CODIGO   { $$ = $1; }
+CODIGO: %empty             { $$ = NULL; }
+      | DECLARACION CODIGO { 
+                                if ($2) {
+                                    $$ = nodo_seq($1, $2);
+                                } else {
+                                    $$ = $1;
+                                }
+                            }
+      | SENTENCIA CODIGO   { 
+                                if ($2) {
+                                    $$ = nodo_seq($1, $2);
+                                } else {
+                                    $$ = $1;
+                                }
+                            }
       ;
 
-DECLARACION: TIPO VARS PYC ;
+DECLARACION: TIPO VARS PYC { $$ = $2; } ;
 
-VARS: VAR
-    | VAR COMA VARS
+VARS: VAR                  { $$ = $1; }
+    | VAR COMA VARS       { $$ = nodo_seq($1, $3); }
     ;
 
-VAR: ID
-   | ID OP_ASIGN E
-   | ID OP_ASIGN EB
+VAR: ID                    { $$ = nodo_decl($1, NULL); free($1); }
+   | ID OP_ASIGN E        { $$ = nodo_decl($1, $3); free($1); }
+   | ID OP_ASIGN EB       { $$ = nodo_decl($1, $3); free($1); }
    ;
 
 TIPO: INT
     | BOOL
     ;
 
-SENTENCIA: ID OP_ASIGN E PYC    { $$ = nodo_assign($1, $3); }
-         | ID OP_ASIGN EB PYC   { $$ = nodo_assign($1, $3); }
+SENTENCIA: ID OP_ASIGN E PYC    { $$ = nodo_assign($1, $3); free($1); }
+         | ID OP_ASIGN EB PYC   { $$ = nodo_assign($1, $3); free($1); }
          | RETURN PYC           { $$ = nodo_return(NULL); }
          | RETURN E PYC         { $$ = nodo_return($2); }
          | RETURN EB PYC        { $$ = nodo_return($2); }
@@ -75,7 +87,7 @@ E: E OP_SUMA E      { $$ = nodo_opBin(TOP_SUMA, $1, $3); }
  | E OP_MULT E      { $$ = nodo_opBin(TOP_MULT, $1, $3); }
  | E OP_DIV E       { $$ = nodo_opBin(TOP_DIV, $1, $3); }
  | PARA E PARC      { $$ = $2; }
- | ID               { $$ = nodo_ID($1); }
+ | ID               { $$ = nodo_ID($1); free($1); }
  | NUMERO           { $$ = nodo_int($1); }
  ;
 

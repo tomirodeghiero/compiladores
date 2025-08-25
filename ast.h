@@ -12,7 +12,8 @@ typedef enum {
     NODO_OP,
     NODO_INT,
     NODO_BOOL,
-    NODO_ID
+    NODO_ID,
+    NODO_SEQ
 } TipoNodo;
 
 typedef enum {
@@ -56,8 +57,11 @@ Nodo *nodo_bool(int val_bool);
 Nodo *nodo_opBin(TipoOP op, Nodo *izq, Nodo *der);
 Nodo *nodo_assign(char *id, Nodo *expr);
 Nodo *nodo_return(Nodo *expr);
+Nodo *nodo_seq(Nodo *primero, Nodo *resto);
+Nodo *nodo_decl(char *id, Nodo *expr);
 
 void imprimir_nodo(Nodo *nodo, int n);
 void nodo_libre(Nodo *nodo);
+void exportar_dot(Nodo *nodo, const char *filename);
 
 #endif

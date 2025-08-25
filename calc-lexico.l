@@ -1,4 +1,5 @@
 %{
+#define _POSIX_C_SOURCE 200809L
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -6,6 +7,7 @@
 %}
 
 %option noyywrap
+%option yylineno
 
 letra   [a-zA-Z]
 digito  [0-9]
@@ -42,7 +44,7 @@ id      {letra}({letra}|{digito})*
 ">"         { printf("MAYOR : %s\n", yytext); return OP_MAYOR; }
 "<"         { printf("MENOR : %s\n", yytext); return OP_MENOR; }
 
-[ \t\n]+    ;   /* Ignorar espacios en blanco */
+[ \t\r\n]+    ;   /* Ignorar espacios en blanco */
 .           ;   /* Ignorar caracteres no reconocidos */
 
 %%
