@@ -189,6 +189,22 @@ void imprimir_nodo(Nodo *n, int ind) {
             if (n->ret_expr)
                 imprimir_nodo(n->ret_expr, ind + 1);
             break;
+            case NODO_BOOL:
+            printf("%s", n->val_bool ? "true" : "false");
+            break;
+        case NODO_ASSIGN:
+            printf("ASSIGN(%s = ", n->assign.id);
+            imprimir_nodo(n->assign.expr, 0);
+            printf(")\n");
+            break;
+        case NODO_PROG:
+            printf("PROG\n");
+            imprimir_nodo(n->opBinaria.izq, ind + 1);
+            break;
+        case NODO_SENT:
+            printf("SENT\n");
+            imprimir_nodo(n->opBinaria.izq, ind + 1);
+            break;        
     }
 }
 
@@ -256,6 +272,9 @@ static void escribir_dot_rec(FILE *f, Nodo *n) {
                 fprintf(f, "  nodo%d -> nodo%d;\n", mi_id, contador_nodos);
                 escribir_dot_rec(f, n->assign.expr);
             }
+            break;
+        default: 
+            fprintf(stderr, "Error: tipo de nodo desconocido %d\n", n->tipo);
             break;
     }
 }

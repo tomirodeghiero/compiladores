@@ -163,8 +163,27 @@ extern FILE *yyin, *yyout;
 #define EOB_ACT_END_OF_FILE 1
 #define EOB_ACT_LAST_MATCH 2
     
-    #define YY_LESS_LINENO(n)
-    #define YY_LINENO_REWIND_TO(ptr)
+    /* Note: We specifically omit the test for yy_rule_can_match_eol because it requires
+     *       access to the local variable yy_act. Since yyless() is a macro, it would break
+     *       existing scanners that call yyless() from OUTSIDE yylex.
+     *       One obvious solution it to make yy_act a global. I tried that, and saw
+     *       a 5% performance hit in a non-yylineno scanner, because yy_act is
+     *       normally declared as a register variable-- so it is not worth it.
+     */
+    #define  YY_LESS_LINENO(n) \
+            do { \
+                yy_size_t yyl;\
+                for ( yyl = n; yyl < yyleng; ++yyl )\
+                    if ( yytext[yyl] == '\n' )\
+                        --yylineno;\
+            }while(0)
+    #define YY_LINENO_REWIND_TO(dst) \
+            do {\
+                const char *p;\
+                for ( p = yy_cp-1; p >= (dst); --p)\
+                    if ( *p == '\n' )\
+                        --yylineno;\
+            }while(0)
     
 /* Return all but the first "n" matched characters back to the input stream. */
 #define yyless(n) \
@@ -378,7 +397,7 @@ static const flex_int16_t yy_accept[63] =
 static const YY_CHAR yy_ec[256] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    2,    3,
-        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
+        1,    1,    2,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    2,    1,    1,    1,    1,    1,    4,    1,    5,
         6,    7,    8,    9,   10,    1,   11,   12,   12,   12,
@@ -471,6 +490,12 @@ static const flex_int16_t yy_chk[112] =
        62
     } ;
 
+/* Table of booleans, true if rule could match eol. */
+static const flex_int32_t yy_rule_can_match_eol[31] =
+    {   0,
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+    0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0,     };
+
 static yy_state_type yy_last_accepting_state;
 static char *yy_last_accepting_cpos;
 
@@ -487,12 +512,13 @@ int yy_flex_debug = 0;
 char *yytext;
 #line 1 "calc-lexico.l"
 #line 2 "calc-lexico.l"
+#define _POSIX_C_SOURCE 200809L
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "calc-sintaxis.tab.h"
-#line 494 "lex.yy.c"
-#line 495 "lex.yy.c"
+#line 520 "lex.yy.c"
+#line 521 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -709,10 +735,10 @@ YY_DECL
 		}
 
 	{
-#line 15 "calc-lexico.l"
+#line 17 "calc-lexico.l"
 
 
-#line 715 "lex.yy.c"
+#line 741 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -758,6 +784,16 @@ yy_find_action:
 
 		YY_DO_BEFORE_ACTION;
 
+		if ( yy_act != YY_END_OF_BUFFER && yy_rule_can_match_eol[yy_act] )
+			{
+			yy_size_t yyl;
+			for ( yyl = 0; yyl < yyleng; ++yyl )
+				if ( yytext[yyl] == '\n' )
+					
+    yylineno++;
+;
+			}
+
 do_action:	/* This label is used only to access EOF actions. */
 
 		switch ( yy_act )
@@ -771,156 +807,156 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 17 "calc-lexico.l"
+#line 19 "calc-lexico.l"
 { printf("INT : %s\n", yytext); return INT; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 18 "calc-lexico.l"
+#line 20 "calc-lexico.l"
 { printf("BOOL : %s\n", yytext); return BOOL; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 19 "calc-lexico.l"
+#line 21 "calc-lexico.l"
 { printf("VOID : %s\n", yytext); return VOID; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 20 "calc-lexico.l"
+#line 22 "calc-lexico.l"
 { printf("RETURN : %s\n", yytext); return RETURN; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 21 "calc-lexico.l"
+#line 23 "calc-lexico.l"
 { printf("MAIN : %s\n", yytext); return MAIN; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 22 "calc-lexico.l"
+#line 24 "calc-lexico.l"
 { printf("AND : %s\n", yytext); return OP_AND; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 23 "calc-lexico.l"
+#line 25 "calc-lexico.l"
 { printf("OR : %s\n", yytext); return OP_OR; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 24 "calc-lexico.l"
+#line 26 "calc-lexico.l"
 { printf("IGUAL : %s\n", yytext); return OP_IGUAL; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 25 "calc-lexico.l"
+#line 27 "calc-lexico.l"
 { printf("TRUE : %s\n", yytext); return TRUE; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 26 "calc-lexico.l"
+#line 28 "calc-lexico.l"
 { printf("FALSE : %s\n", yytext); return FALSE; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 27 "calc-lexico.l"
+#line 29 "calc-lexico.l"
 { printf("NUMERO : %s\n", yytext); yylval.num = atoi(yytext); return NUMERO; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 28 "calc-lexico.l"
+#line 30 "calc-lexico.l"
 { printf("ID : %s\n", yytext); yylval.str = strdup(yytext); if (!yylval.str) { perror("strdup"); exit(1); } return ID; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 29 "calc-lexico.l"
+#line 31 "calc-lexico.l"
 { printf("RESTA : %s\n", yytext); return OP_RESTA; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 30 "calc-lexico.l"
+#line 32 "calc-lexico.l"
 { printf("SUMA : %s\n", yytext); return OP_SUMA; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 31 "calc-lexico.l"
+#line 33 "calc-lexico.l"
 { printf("PARA : %s\n", yytext); return PARA; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 32 "calc-lexico.l"
+#line 34 "calc-lexico.l"
 { printf("PARC : %s\n", yytext); return PARC; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 33 "calc-lexico.l"
+#line 35 "calc-lexico.l"
 { printf("LLAA : %s\n", yytext); return LLAA; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 34 "calc-lexico.l"
+#line 36 "calc-lexico.l"
 { printf("LLAC : %s\n", yytext); return LLAC; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 35 "calc-lexico.l"
+#line 37 "calc-lexico.l"
 { printf("CORA : %s\n", yytext); return CORA; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 36 "calc-lexico.l"
+#line 38 "calc-lexico.l"
 { printf("CORC : %s\n", yytext); return CORC; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 37 "calc-lexico.l"
+#line 39 "calc-lexico.l"
 { printf("ASIGN : %s\n", yytext); return OP_ASIGN; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 38 "calc-lexico.l"
+#line 40 "calc-lexico.l"
 { printf("OP_MULT : %s\n", yytext); return OP_MULT; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 39 "calc-lexico.l"
+#line 41 "calc-lexico.l"
 { printf("DIV : %s\n", yytext); return OP_DIV; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 40 "calc-lexico.l"
+#line 42 "calc-lexico.l"
 { printf("PYC : %s\n", yytext); return PYC; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 41 "calc-lexico.l"
+#line 43 "calc-lexico.l"
 { printf("COMA : %s\n", yytext); return COMA; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 42 "calc-lexico.l"
+#line 44 "calc-lexico.l"
 { printf("MAYOR : %s\n", yytext); return OP_MAYOR; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 43 "calc-lexico.l"
+#line 45 "calc-lexico.l"
 { printf("MENOR : %s\n", yytext); return OP_MENOR; }
 	YY_BREAK
 case 28:
 /* rule 28 can match eol */
 YY_RULE_SETUP
-#line 45 "calc-lexico.l"
+#line 47 "calc-lexico.l"
 ;   /* Ignorar espacios en blanco */
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 46 "calc-lexico.l"
+#line 48 "calc-lexico.l"
 ;   /* Ignorar caracteres no reconocidos */
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 48 "calc-lexico.l"
+#line 50 "calc-lexico.l"
 ECHO;
 	YY_BREAK
-#line 923 "lex.yy.c"
+#line 959 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1288,6 +1324,10 @@ static int yy_get_next_buffer (void)
 
 	*--yy_cp = (char) c;
 
+    if ( c == '\n' ){
+        --yylineno;
+    }
+
 	(yytext_ptr) = yy_bp;
 	(yy_hold_char) = *yy_cp;
 	(yy_c_buf_p) = yy_cp;
@@ -1364,6 +1404,11 @@ static int yy_get_next_buffer (void)
 	c = *(unsigned char *) (yy_c_buf_p);	/* cast for 8-bit char's */
 	*(yy_c_buf_p) = '\0';	/* preserve yytext */
 	(yy_hold_char) = *++(yy_c_buf_p);
+
+	if ( c == '\n' )
+		
+    yylineno++;
+;
 
 	return c;
 }
@@ -1831,6 +1876,9 @@ static int yy_init_globals (void)
      * This function is called from yylex_destroy(), so don't allocate here.
      */
 
+    /* We do not touch yylineno unless the option is enabled. */
+    yylineno =  1;
+    
     (yy_buffer_stack) = NULL;
     (yy_buffer_stack_top) = 0;
     (yy_buffer_stack_max) = 0;
@@ -1925,7 +1973,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 48 "calc-lexico.l"
+#line 50 "calc-lexico.l"
 
 
 void yyerror(const char *s) {
