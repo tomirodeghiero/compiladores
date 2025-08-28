@@ -22,7 +22,7 @@ extern void yyerror(const char *s);
 %token PARA PARC LLAA LLAC CORA CORC PYC COMA
 %token OP_RESTA OP_SUMA OP_MAYOR OP_MENOR OP_AND OP_OR OP_DIV OP_MULT OP_IGUAL OP_ASIGN
 
-%type <nodo> prog CODIGO SENTENCIA E EB DECLARACION VAR VARS TIPO
+%type <nodo> prog CODIGO SENTENCIA E EB DECLARACION VAR VARS
 
 %left OP_OR
 %left OP_AND
@@ -31,67 +31,100 @@ extern void yyerror(const char *s);
 
 %%
 
-prog: TIPOM MAIN PARA PARC LLAA CODIGO LLAC {
+prog:
+    TIPOM MAIN PARA PARC LLAA CODIGO LLAC {
+        // Imprime el AST básico
         imprimir_nodo($6, 0);
+
+        // Exporta el AST a un archivo DOT/PNG
         exportar_dot($6, "ast_tree");
+
+        // Evalúa el nodo raíz directamente (resultado “crudo”)
+        int resultado_directo = eval_nodo($6);
+        printf("Resultado (eval_nodo): %d\n", resultado_directo);
+
+        // Ahora interpretamos el programa completo con todas las impresiones
+        int resultado_completo = interpretar_programa($6);
+
+        // Libera la memoria del AST
         nodo_libre($6);
-        printf("No hay errores\n");
-    };
 
-TIPOM: INT
-     | BOOL
-     | VOID
-     ;
+        // Libera la tabla de símbolos
+        ast_liberar_recursos();
 
-CODIGO: %empty             { $$ = NULL; }
-      | DECLARACION CODIGO { 
-                                if ($2) {
-                                    $$ = nodo_seq($1, $2);
-                                } else {
-                                    $$ = $1;
-                                }
-                            }
-      | SENTENCIA CODIGO   { 
-                                if ($2) {
-                                    $$ = nodo_seq($1, $2);
-                                } else {
-                                    $$ = $1;
-                                }
-                            }
-      ;
+        printf("┌───────────────────────────────┐\n");
+        printf("│ Resultado del Programa        │\n");
+        printf("└───────────────────────────────┘\n");
+        printf("     %d\n", resultado_completo);
+        printf("     ✔ No hay errores\n\n");
+    }
+;
 
-DECLARACION: TIPO VARS PYC { $$ = $2; } ;
 
-VARS: VAR                  { $$ = $1; }
-    | VAR COMA VARS       { $$ = nodo_seq($1, $3); }
-    ;
+TIPOM:
+    INT
+  | BOOL
+  | VOID
+;
 
-VAR: ID                    { $$ = nodo_decl($1, NULL); free($1); }
-   | ID OP_ASIGN E        { $$ = nodo_decl($1, $3); free($1); }
-   | ID OP_ASIGN EB       { $$ = nodo_decl($1, $3); free($1); }
-   ;
+CODIGO:
+    %empty              { $$ = NULL; }
+  | DECLARACION CODIGO  {
+        if ($2) {
+            $$ = nodo_seq($1, $2);
+        } else {
+            $$ = $1;
+        }
+    }
+  | SENTENCIA CODIGO    {
+        if ($2) {
+            $$ = nodo_seq($1, $2);
+        } else {
+            $$ = $1;
+        }
+    }
+;
 
-TIPO: INT
-    | BOOL
-    ;
+DECLARACION:
+    TIPO VARS PYC { $$ = $2; }
+;
 
-SENTENCIA: ID OP_ASIGN E PYC    { $$ = nodo_assign($1, $3); free($1); }
-         | ID OP_ASIGN EB PYC   { $$ = nodo_assign($1, $3); free($1); }
-         | RETURN PYC           { $$ = nodo_return(NULL); }
-         | RETURN E PYC         { $$ = nodo_return($2); }
-         | RETURN EB PYC        { $$ = nodo_return($2); }
-         ;
+VARS:
+    VAR             { $$ = $1; }
+  | VAR COMA VARS   { $$ = nodo_seq($1, $3); }
+;
 
-E: E OP_SUMA E      { $$ = nodo_opBin(TOP_SUMA, $1, $3); }
- | E OP_RESTA E     { $$ = nodo_opBin(TOP_RESTA, $1, $3); }
- | E OP_MULT E      { $$ = nodo_opBin(TOP_MULT, $1, $3); }
- | E OP_DIV E       { $$ = nodo_opBin(TOP_DIV, $1, $3); }
- | PARA E PARC      { $$ = $2; }
- | ID               { $$ = nodo_ID($1); free($1); }
- | NUMERO           { $$ = nodo_int($1); }
- ;
+VAR:
+    ID                    { $$ = nodo_decl($1, NULL); free($1); }
+  | ID OP_ASIGN E        { $$ = nodo_decl($1, $3); free($1); }
+  | ID OP_ASIGN EB       { $$ = nodo_decl($1, $3); free($1); }
+;
 
-EB: EB OP_OR EB     { $$ = nodo_opBin(TOP_OR, $1, $3); }
+TIPO:
+    INT
+  | BOOL
+;
+
+SENTENCIA:
+    ID OP_ASIGN E PYC     { $$ = nodo_assign($1, $3); free($1); }
+  | ID OP_ASIGN EB PYC    { $$ = nodo_assign($1, $3); free($1); }
+  | RETURN PYC            { $$ = nodo_return(NULL); }
+  | RETURN E PYC          { $$ = nodo_return($2); }
+  | RETURN EB PYC         { $$ = nodo_return($2); }
+;
+
+E:
+    E OP_SUMA E     { $$ = nodo_opBin(TOP_SUMA, $1, $3); }
+  | E OP_RESTA E    { $$ = nodo_opBin(TOP_RESTA, $1, $3); }
+  | E OP_MULT E     { $$ = nodo_opBin(TOP_MULT, $1, $3); }
+  | E OP_DIV E      { $$ = nodo_opBin(TOP_DIV, $1, $3); }
+  | PARA E PARC     { $$ = $2; }
+  | ID              { $$ = nodo_ID($1); free($1); }
+  | NUMERO          { $$ = nodo_int($1); }
+;
+
+EB:
+    EB OP_OR EB     { $$ = nodo_opBin(TOP_OR, $1, $3); }
   | EB OP_AND EB    { $$ = nodo_opBin(TOP_AND, $1, $3); }
   | E OP_IGUAL E    { $$ = nodo_opBin(TOP_IGUAL, $1, $3); }
   | E OP_MAYOR E    { $$ = nodo_opBin(TOP_MAYOR, $1, $3); }
@@ -99,7 +132,7 @@ EB: EB OP_OR EB     { $$ = nodo_opBin(TOP_OR, $1, $3); }
   | PARA EB PARC    { $$ = $2; }
   | TRUE            { $$ = nodo_bool(1); }
   | FALSE           { $$ = nodo_bool(0); }
-  ;
+;
 
 %%
 

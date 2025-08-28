@@ -530,12 +530,12 @@ static const yytype_int8 yytranslate[] =
 
 #if YYDEBUG
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
-static const yytype_int8 yyrline[] =
+static const yytype_uint8 yyrline[] =
 {
-       0,    34,    34,    41,    42,    43,    46,    47,    54,    63,
-      65,    66,    69,    70,    71,    74,    75,    78,    79,    80,
-      81,    82,    85,    86,    87,    88,    89,    90,    91,    94,
-      95,    96,    97,    98,    99,   100,   101
+       0,    35,    35,    65,    66,    67,    71,    72,    79,    89,
+      93,    94,    98,    99,   100,   104,   105,   109,   110,   111,
+     112,   113,   117,   118,   119,   120,   121,   122,   123,   127,
+     128,   129,   130,   131,   132,   133,   134
 };
 #endif
 
@@ -1145,204 +1145,224 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* prog: TIPOM MAIN PARA PARC LLAA CODIGO LLAC  */
-#line 34 "calc-sintaxis.y"
-                                            {
+#line 35 "calc-sintaxis.y"
+                                          {
+        // Imprime el AST básico
         imprimir_nodo((yyvsp[-1].nodo), 0);
+
+        // Exporta el AST a un archivo DOT/PNG
         exportar_dot((yyvsp[-1].nodo), "ast_tree");
+
+        // Evalúa el nodo raíz directamente (resultado “crudo”)
+        int resultado_directo = eval_nodo((yyvsp[-1].nodo));
+        printf("Resultado (eval_nodo): %d\n", resultado_directo);
+
+        // Ahora interpretamos el programa completo con todas las impresiones
+        int resultado_completo = interpretar_programa((yyvsp[-1].nodo));
+
+        // Libera la memoria del AST
         nodo_libre((yyvsp[-1].nodo));
-        printf("No hay errores\n");
+
+        // Libera la tabla de símbolos
+        ast_liberar_recursos();
+
+        printf("┌───────────────────────────────┐\n");
+        printf("│ Resultado del Programa        │\n");
+        printf("└───────────────────────────────┘\n");
+        printf("     %d\n", resultado_completo);
+        printf("     ✔ No hay errores\n\n");
     }
-#line 1156 "calc-sintaxis.tab.c"
+#line 1176 "calc-sintaxis.tab.c"
     break;
 
   case 6: /* CODIGO: %empty  */
-#line 46 "calc-sintaxis.y"
-                           { (yyval.nodo) = NULL; }
-#line 1162 "calc-sintaxis.tab.c"
+#line 71 "calc-sintaxis.y"
+                        { (yyval.nodo) = NULL; }
+#line 1182 "calc-sintaxis.tab.c"
     break;
 
   case 7: /* CODIGO: DECLARACION CODIGO  */
-#line 47 "calc-sintaxis.y"
-                           { 
-                                if ((yyvsp[0].nodo)) {
-                                    (yyval.nodo) = nodo_seq((yyvsp[-1].nodo), (yyvsp[0].nodo));
-                                } else {
-                                    (yyval.nodo) = (yyvsp[-1].nodo);
-                                }
-                            }
-#line 1174 "calc-sintaxis.tab.c"
+#line 72 "calc-sintaxis.y"
+                        {
+        if ((yyvsp[0].nodo)) {
+            (yyval.nodo) = nodo_seq((yyvsp[-1].nodo), (yyvsp[0].nodo));
+        } else {
+            (yyval.nodo) = (yyvsp[-1].nodo);
+        }
+    }
+#line 1194 "calc-sintaxis.tab.c"
     break;
 
   case 8: /* CODIGO: SENTENCIA CODIGO  */
-#line 54 "calc-sintaxis.y"
-                           { 
-                                if ((yyvsp[0].nodo)) {
-                                    (yyval.nodo) = nodo_seq((yyvsp[-1].nodo), (yyvsp[0].nodo));
-                                } else {
-                                    (yyval.nodo) = (yyvsp[-1].nodo);
-                                }
-                            }
-#line 1186 "calc-sintaxis.tab.c"
+#line 79 "calc-sintaxis.y"
+                        {
+        if ((yyvsp[0].nodo)) {
+            (yyval.nodo) = nodo_seq((yyvsp[-1].nodo), (yyvsp[0].nodo));
+        } else {
+            (yyval.nodo) = (yyvsp[-1].nodo);
+        }
+    }
+#line 1206 "calc-sintaxis.tab.c"
     break;
 
   case 9: /* DECLARACION: TIPO VARS PYC  */
-#line 63 "calc-sintaxis.y"
-                           { (yyval.nodo) = (yyvsp[-1].nodo); }
-#line 1192 "calc-sintaxis.tab.c"
+#line 89 "calc-sintaxis.y"
+                  { (yyval.nodo) = (yyvsp[-1].nodo); }
+#line 1212 "calc-sintaxis.tab.c"
     break;
 
   case 10: /* VARS: VAR  */
-#line 65 "calc-sintaxis.y"
-                           { (yyval.nodo) = (yyvsp[0].nodo); }
-#line 1198 "calc-sintaxis.tab.c"
+#line 93 "calc-sintaxis.y"
+                    { (yyval.nodo) = (yyvsp[0].nodo); }
+#line 1218 "calc-sintaxis.tab.c"
     break;
 
   case 11: /* VARS: VAR COMA VARS  */
-#line 66 "calc-sintaxis.y"
-                          { (yyval.nodo) = nodo_seq((yyvsp[-2].nodo), (yyvsp[0].nodo)); }
-#line 1204 "calc-sintaxis.tab.c"
+#line 94 "calc-sintaxis.y"
+                    { (yyval.nodo) = nodo_seq((yyvsp[-2].nodo), (yyvsp[0].nodo)); }
+#line 1224 "calc-sintaxis.tab.c"
     break;
 
   case 12: /* VAR: ID  */
-#line 69 "calc-sintaxis.y"
-                           { (yyval.nodo) = nodo_decl((yyvsp[0].str), NULL); free((yyvsp[0].str)); }
-#line 1210 "calc-sintaxis.tab.c"
+#line 98 "calc-sintaxis.y"
+                          { (yyval.nodo) = nodo_decl((yyvsp[0].str), NULL); free((yyvsp[0].str)); }
+#line 1230 "calc-sintaxis.tab.c"
     break;
 
   case 13: /* VAR: ID OP_ASIGN E  */
-#line 70 "calc-sintaxis.y"
-                          { (yyval.nodo) = nodo_decl((yyvsp[-2].str), (yyvsp[0].nodo)); free((yyvsp[-2].str)); }
-#line 1216 "calc-sintaxis.tab.c"
+#line 99 "calc-sintaxis.y"
+                         { (yyval.nodo) = nodo_decl((yyvsp[-2].str), (yyvsp[0].nodo)); free((yyvsp[-2].str)); }
+#line 1236 "calc-sintaxis.tab.c"
     break;
 
   case 14: /* VAR: ID OP_ASIGN EB  */
-#line 71 "calc-sintaxis.y"
-                          { (yyval.nodo) = nodo_decl((yyvsp[-2].str), (yyvsp[0].nodo)); free((yyvsp[-2].str)); }
-#line 1222 "calc-sintaxis.tab.c"
+#line 100 "calc-sintaxis.y"
+                         { (yyval.nodo) = nodo_decl((yyvsp[-2].str), (yyvsp[0].nodo)); free((yyvsp[-2].str)); }
+#line 1242 "calc-sintaxis.tab.c"
     break;
 
   case 17: /* SENTENCIA: ID OP_ASIGN E PYC  */
-#line 78 "calc-sintaxis.y"
-                                { (yyval.nodo) = nodo_assign((yyvsp[-3].str), (yyvsp[-1].nodo)); free((yyvsp[-3].str)); }
-#line 1228 "calc-sintaxis.tab.c"
+#line 109 "calc-sintaxis.y"
+                          { (yyval.nodo) = nodo_assign((yyvsp[-3].str), (yyvsp[-1].nodo)); free((yyvsp[-3].str)); }
+#line 1248 "calc-sintaxis.tab.c"
     break;
 
   case 18: /* SENTENCIA: ID OP_ASIGN EB PYC  */
-#line 79 "calc-sintaxis.y"
-                                { (yyval.nodo) = nodo_assign((yyvsp[-3].str), (yyvsp[-1].nodo)); free((yyvsp[-3].str)); }
-#line 1234 "calc-sintaxis.tab.c"
+#line 110 "calc-sintaxis.y"
+                          { (yyval.nodo) = nodo_assign((yyvsp[-3].str), (yyvsp[-1].nodo)); free((yyvsp[-3].str)); }
+#line 1254 "calc-sintaxis.tab.c"
     break;
 
   case 19: /* SENTENCIA: RETURN PYC  */
-#line 80 "calc-sintaxis.y"
-                                { (yyval.nodo) = nodo_return(NULL); }
-#line 1240 "calc-sintaxis.tab.c"
+#line 111 "calc-sintaxis.y"
+                          { (yyval.nodo) = nodo_return(NULL); }
+#line 1260 "calc-sintaxis.tab.c"
     break;
 
   case 20: /* SENTENCIA: RETURN E PYC  */
-#line 81 "calc-sintaxis.y"
-                                { (yyval.nodo) = nodo_return((yyvsp[-1].nodo)); }
-#line 1246 "calc-sintaxis.tab.c"
+#line 112 "calc-sintaxis.y"
+                          { (yyval.nodo) = nodo_return((yyvsp[-1].nodo)); }
+#line 1266 "calc-sintaxis.tab.c"
     break;
 
   case 21: /* SENTENCIA: RETURN EB PYC  */
-#line 82 "calc-sintaxis.y"
-                                { (yyval.nodo) = nodo_return((yyvsp[-1].nodo)); }
-#line 1252 "calc-sintaxis.tab.c"
+#line 113 "calc-sintaxis.y"
+                          { (yyval.nodo) = nodo_return((yyvsp[-1].nodo)); }
+#line 1272 "calc-sintaxis.tab.c"
     break;
 
   case 22: /* E: E OP_SUMA E  */
-#line 85 "calc-sintaxis.y"
+#line 117 "calc-sintaxis.y"
                     { (yyval.nodo) = nodo_opBin(TOP_SUMA, (yyvsp[-2].nodo), (yyvsp[0].nodo)); }
-#line 1258 "calc-sintaxis.tab.c"
+#line 1278 "calc-sintaxis.tab.c"
     break;
 
   case 23: /* E: E OP_RESTA E  */
-#line 86 "calc-sintaxis.y"
+#line 118 "calc-sintaxis.y"
                     { (yyval.nodo) = nodo_opBin(TOP_RESTA, (yyvsp[-2].nodo), (yyvsp[0].nodo)); }
-#line 1264 "calc-sintaxis.tab.c"
+#line 1284 "calc-sintaxis.tab.c"
     break;
 
   case 24: /* E: E OP_MULT E  */
-#line 87 "calc-sintaxis.y"
+#line 119 "calc-sintaxis.y"
                     { (yyval.nodo) = nodo_opBin(TOP_MULT, (yyvsp[-2].nodo), (yyvsp[0].nodo)); }
-#line 1270 "calc-sintaxis.tab.c"
+#line 1290 "calc-sintaxis.tab.c"
     break;
 
   case 25: /* E: E OP_DIV E  */
-#line 88 "calc-sintaxis.y"
+#line 120 "calc-sintaxis.y"
                     { (yyval.nodo) = nodo_opBin(TOP_DIV, (yyvsp[-2].nodo), (yyvsp[0].nodo)); }
-#line 1276 "calc-sintaxis.tab.c"
+#line 1296 "calc-sintaxis.tab.c"
     break;
 
   case 26: /* E: PARA E PARC  */
-#line 89 "calc-sintaxis.y"
+#line 121 "calc-sintaxis.y"
                     { (yyval.nodo) = (yyvsp[-1].nodo); }
-#line 1282 "calc-sintaxis.tab.c"
+#line 1302 "calc-sintaxis.tab.c"
     break;
 
   case 27: /* E: ID  */
-#line 90 "calc-sintaxis.y"
+#line 122 "calc-sintaxis.y"
                     { (yyval.nodo) = nodo_ID((yyvsp[0].str)); free((yyvsp[0].str)); }
-#line 1288 "calc-sintaxis.tab.c"
+#line 1308 "calc-sintaxis.tab.c"
     break;
 
   case 28: /* E: NUMERO  */
-#line 91 "calc-sintaxis.y"
+#line 123 "calc-sintaxis.y"
                     { (yyval.nodo) = nodo_int((yyvsp[0].num)); }
-#line 1294 "calc-sintaxis.tab.c"
+#line 1314 "calc-sintaxis.tab.c"
     break;
 
   case 29: /* EB: EB OP_OR EB  */
-#line 94 "calc-sintaxis.y"
+#line 127 "calc-sintaxis.y"
                     { (yyval.nodo) = nodo_opBin(TOP_OR, (yyvsp[-2].nodo), (yyvsp[0].nodo)); }
-#line 1300 "calc-sintaxis.tab.c"
+#line 1320 "calc-sintaxis.tab.c"
     break;
 
   case 30: /* EB: EB OP_AND EB  */
-#line 95 "calc-sintaxis.y"
+#line 128 "calc-sintaxis.y"
                     { (yyval.nodo) = nodo_opBin(TOP_AND, (yyvsp[-2].nodo), (yyvsp[0].nodo)); }
-#line 1306 "calc-sintaxis.tab.c"
+#line 1326 "calc-sintaxis.tab.c"
     break;
 
   case 31: /* EB: E OP_IGUAL E  */
-#line 96 "calc-sintaxis.y"
+#line 129 "calc-sintaxis.y"
                     { (yyval.nodo) = nodo_opBin(TOP_IGUAL, (yyvsp[-2].nodo), (yyvsp[0].nodo)); }
-#line 1312 "calc-sintaxis.tab.c"
+#line 1332 "calc-sintaxis.tab.c"
     break;
 
   case 32: /* EB: E OP_MAYOR E  */
-#line 97 "calc-sintaxis.y"
+#line 130 "calc-sintaxis.y"
                     { (yyval.nodo) = nodo_opBin(TOP_MAYOR, (yyvsp[-2].nodo), (yyvsp[0].nodo)); }
-#line 1318 "calc-sintaxis.tab.c"
+#line 1338 "calc-sintaxis.tab.c"
     break;
 
   case 33: /* EB: E OP_MENOR E  */
-#line 98 "calc-sintaxis.y"
+#line 131 "calc-sintaxis.y"
                     { (yyval.nodo) = nodo_opBin(TOP_MENOR, (yyvsp[-2].nodo), (yyvsp[0].nodo)); }
-#line 1324 "calc-sintaxis.tab.c"
+#line 1344 "calc-sintaxis.tab.c"
     break;
 
   case 34: /* EB: PARA EB PARC  */
-#line 99 "calc-sintaxis.y"
+#line 132 "calc-sintaxis.y"
                     { (yyval.nodo) = (yyvsp[-1].nodo); }
-#line 1330 "calc-sintaxis.tab.c"
+#line 1350 "calc-sintaxis.tab.c"
     break;
 
   case 35: /* EB: TRUE  */
-#line 100 "calc-sintaxis.y"
+#line 133 "calc-sintaxis.y"
                     { (yyval.nodo) = nodo_bool(1); }
-#line 1336 "calc-sintaxis.tab.c"
+#line 1356 "calc-sintaxis.tab.c"
     break;
 
   case 36: /* EB: FALSE  */
-#line 101 "calc-sintaxis.y"
+#line 134 "calc-sintaxis.y"
                     { (yyval.nodo) = nodo_bool(0); }
-#line 1342 "calc-sintaxis.tab.c"
+#line 1362 "calc-sintaxis.tab.c"
     break;
 
 
-#line 1346 "calc-sintaxis.tab.c"
+#line 1366 "calc-sintaxis.tab.c"
 
       default: break;
     }
@@ -1535,7 +1555,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 104 "calc-sintaxis.y"
+#line 137 "calc-sintaxis.y"
 
 
 int main(int argc, char *argv[]) {
