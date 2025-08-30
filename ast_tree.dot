@@ -30,7 +30,9 @@ digraph AST {
     nodo12 -> nodo14;
     nodo14 [label="3"];
     nodo8 -> nodo15 [style=dashed];
-    nodo15 [label="RETURN", style=filled, fillcolor=lightpink];
+    nodo15 [label="SEQ", style=filled, fillcolor=lightgray];
     nodo15 -> nodo16;
-    nodo16 [label="sum"];
+    nodo16 [label="RETURN", style=filled, fillcolor=lightpink];
+    nodo16 -> nodo17;
+    nodo17 [label="sum"];
 }

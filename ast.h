@@ -77,4 +77,7 @@ int eval_nodo(Nodo *n);                /* Evalúa un nodo del AST y devuelve su 
 int interpretar_programa(Nodo *programa);
 void ast_liberar_recursos(void);
 
+/* --- Codegen a seudo-assembly --- */
+void generar_asm(Nodo *programa, const char *filename);
+
 #endif /* AST_H */

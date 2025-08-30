@@ -33,25 +33,32 @@ extern void yyerror(const char *s);
 
 prog:
     TIPOM MAIN PARA PARC LLAA CODIGO LLAC {
-        // Imprime el AST básico
+        // Imprime el AST con indentación
         imprimir_nodo($6, 0);
 
-        // Exporta el AST a un archivo DOT/PNG
+        // Exporta el AST a DOT y genera PNG
         exportar_dot($6, "ast_tree");
 
-        // Evalúa el nodo raíz directamente (resultado “crudo”)
+        // Genera seudo-assembly
+        printf("\n----------------------------------------\n");
+        generar_asm($6, "programa.sasm");
+        printf("Seudo-assembly escrito en 'programa.sasm'\n");
+        printf("----------------------------------------\n");
+
+        // Evalúa directamente el nodo raíz
         int resultado_directo = eval_nodo($6);
         printf("Resultado (eval_nodo): %d\n", resultado_directo);
 
-        // Ahora interpretamos el programa completo con todas las impresiones
+        // Interpreta el programa completo con impresiones detalladas
         int resultado_completo = interpretar_programa($6);
 
-        // Libera la memoria del AST
+        // Libera memoria del AST
         nodo_libre($6);
 
-        // Libera la tabla de símbolos
+        // Libera tabla de símbolos
         ast_liberar_recursos();
 
+        // Imprime resultado final
         printf("┌───────────────────────────────┐\n");
         printf("│ Resultado del Programa        │\n");
         printf("└───────────────────────────────┘\n");
@@ -59,7 +66,6 @@ prog:
         printf("     ✔ No hay errores\n\n");
     }
 ;
-
 
 TIPOM:
     INT
@@ -70,18 +76,10 @@ TIPOM:
 CODIGO:
     %empty              { $$ = NULL; }
   | DECLARACION CODIGO  {
-        if ($2) {
-            $$ = nodo_seq($1, $2);
-        } else {
-            $$ = $1;
-        }
+        $$ = nodo_seq($1, $2);
     }
   | SENTENCIA CODIGO    {
-        if ($2) {
-            $$ = nodo_seq($1, $2);
-        } else {
-            $$ = $1;
-        }
+        $$ = nodo_seq($1, $2);
     }
 ;
 
