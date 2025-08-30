@@ -396,11 +396,6 @@ static void liberar_tabla_simbolos(void) {
  * @param n Nodo a evaluar.
  * @return Valor resultante de la evaluación.
  */
-/**
- * Evalúa un nodo del AST y retorna su valor.
- * @param n Nodo a evaluar.
- * @return Valor resultante de la evaluación.
- */
 int eval_nodo(Nodo *n) {
     if (!n) return 0;
 
@@ -480,8 +475,6 @@ int eval_nodo(Nodo *n) {
             exit(EXIT_FAILURE);
     }
 }
-
-/* ------------------ Salida bonita en consola ------------------ */
 
 /**
  * Imprime un divisor con título para separar secciones en la salida.
@@ -577,7 +570,7 @@ int interpretar_programa(Nodo *programa) {
     if (programa)
         resultado = eval_nodo(programa);
 
-    printf("Tabla de Símbolos Final:\n");
+    printf("Tabla de Símbolos:\n");
     printf("----------------------------------------\n");
     if (tabla_size > 0) {
         int max_len = 8; // Ancho mínimo para "Variable"

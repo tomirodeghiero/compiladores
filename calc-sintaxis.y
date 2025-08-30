@@ -1,7 +1,9 @@
+/* Importamos las definiciones de las funciones y estructuras */
 %code requires {
     #include "ast.h"
 }
 
+/* Incluimos bibliotecas de C y declaramos funciones*/
 %{
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,55 +12,56 @@ extern int yylex(void);
 extern void yyerror(const char *s);
 %}
 
+/* Definición de la union */
 %union {
     Nodo *nodo;
     char *str;
     int num;
 }
 
+/* Definición de los tokens */
 %token <str> ID
 %token <num> NUMERO
 %token INT BOOL VOID TRUE FALSE RETURN MAIN
 %token PARA PARC LLAA LLAC CORA CORC PYC COMA
 %token OP_RESTA OP_SUMA OP_MAYOR OP_MENOR OP_AND OP_OR OP_DIV OP_MULT OP_IGUAL OP_ASIGN
 
+/* Asociamos los tipos de los nodos con las producciones */
 %type <nodo> prog CODIGO SENTENCIA E EB DECLARACION VAR VARS
 
+/* Definimos precedencia de operadores */
 %left OP_OR
 %left OP_AND
 %left OP_SUMA OP_RESTA
 %left OP_MULT OP_DIV
 
+/* Reglas de producción */
 %%
-
 prog:
     TIPOM MAIN PARA PARC LLAA CODIGO LLAC {
-        // Imprime el AST con indentación
-        imprimir_nodo($6, 0);
-
-        // Exporta el AST a DOT y genera PNG
+        /* Exporta el AST a DOT y genera PNG */
         exportar_dot($6, "ast_tree");
 
-        // Genera seudo-assembly
+        /* Genera seudo-assembly */
         printf("\n----------------------------------------\n");
         generar_asm($6, "programa.sasm");
         printf("Seudo-assembly escrito en 'programa.sasm'\n");
         printf("----------------------------------------\n");
 
-        // Evalúa directamente el nodo raíz
+        /* Evalúa directamente el nodo raíz */
         int resultado_directo = eval_nodo($6);
         printf("Resultado (eval_nodo): %d\n", resultado_directo);
 
-        // Interpreta el programa completo con impresiones detalladas
+        /* Interpreta el programa completo */
         int resultado_completo = interpretar_programa($6);
 
-        // Libera memoria del AST
+        /* Libera memoria del AST */
         nodo_libre($6);
 
-        // Libera tabla de símbolos
+        /* Libera tabla de símbolos */
         ast_liberar_recursos();
 
-        // Imprime resultado final
+        /* Imprime resultado final */
         printf("┌───────────────────────────────┐\n");
         printf("│ Resultado del Programa        │\n");
         printf("└───────────────────────────────┘\n");
