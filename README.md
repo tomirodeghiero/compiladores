@@ -10,9 +10,11 @@ Este proyecto implementa un compilador para un lenguaje simple extendido con car
 El compilador se implementa utilizando herramientas como **Lex** para el análisis léxico, **Bison** para el análisis sintáctico, y genera un **Árbol Sintáctico Abstracto (AST)**. Además, el proyecto incluye un **intérprete** para evaluar las expresiones y un generador de **pseudo-assembly** para simular la ejecución de los programas.
 
 ## Participantes
-Este proyecto fue realizado por un grupo de estudiantes de la *Universidad Nacional de Rio Cuarto (UNRC)* en la materia *Taller de diseño de software*. El grupo esta compuesto por:
-- Tomas Rodeghiero
-- Joaquin Mezzano
+
+Este proyecto fue realizado por un grupo de estudiantes de la **Universidad Nacional de Rio Cuarto (UNRC)** en la materia **Taller de Diseño de Software**. El grupo esta compuesto por:
+
+- Mezzano, Joaquin
+- Rodeghiero, Tomás
 
 ## Estructura del Proyecto
 
@@ -68,6 +70,7 @@ Para ejecutar este proyecto en un sistema **Ubuntu** o **Mac**, necesitarás ten
    ```
 
 ### Como usar el proyecto
+
 1. **Escribe un programa**
    ```
    Modifica el archivo script.txt
@@ -82,4 +85,5 @@ Para ejecutar este proyecto en un sistema **Ubuntu** o **Mac**, necesitarás ten
    ```
 
 ## Licencia
+
 Este proyecto está disponible bajo la licencia MIT.

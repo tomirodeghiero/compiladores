@@ -45,7 +45,7 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 1 "calc-sintaxis.y"
+#line 2 "calc-sintaxis.y"
 
     #include "ast.h"
 
@@ -95,7 +95,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 13 "calc-sintaxis.y"
+#line 16 "calc-sintaxis.y"
 
     Nodo *nodo;
     char *str;

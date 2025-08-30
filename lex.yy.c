@@ -512,13 +512,19 @@ int yy_flex_debug = 0;
 char *yytext;
 #line 1 "calc-lexico.l"
 #line 2 "calc-lexico.l"
-#define _POSIX_C_SOURCE 200809L
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "calc-sintaxis.tab.h"
-#line 520 "lex.yy.c"
-#line 521 "lex.yy.c"
+    /* Definimos estandar POSIX que se usara para compilar el código.*/
+    #define _POSIX_C_SOURCE 200809L
+
+    /* Inclusión de bibliotecas estandar de C y el archivo Bison */
+    #include <stdio.h>
+    #include <stdlib.h>
+    #include <string.h>
+    #include "calc-sintaxis.tab.h"
+#line 523 "lex.yy.c"
+/* Opciones de Flex */
+/* Expresiones regulares */
+/* Definicion de tokens */
+#line 527 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -735,10 +741,10 @@ YY_DECL
 		}
 
 	{
-#line 17 "calc-lexico.l"
+#line 23 "calc-lexico.l"
 
 
-#line 741 "lex.yy.c"
+#line 747 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -807,156 +813,156 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 19 "calc-lexico.l"
-{ printf("INT : %s\n", yytext); return INT; }
+#line 25 "calc-lexico.l"
+{ return INT; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 20 "calc-lexico.l"
-{ printf("BOOL : %s\n", yytext); return BOOL; }
+#line 26 "calc-lexico.l"
+{ return BOOL; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 21 "calc-lexico.l"
-{ printf("VOID : %s\n", yytext); return VOID; }
+#line 27 "calc-lexico.l"
+{ return VOID; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 22 "calc-lexico.l"
-{ printf("RETURN : %s\n", yytext); return RETURN; }
+#line 28 "calc-lexico.l"
+{ return RETURN; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 23 "calc-lexico.l"
-{ printf("MAIN : %s\n", yytext); return MAIN; }
+#line 29 "calc-lexico.l"
+{ return MAIN; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 24 "calc-lexico.l"
-{ printf("AND : %s\n", yytext); return OP_AND; }
+#line 30 "calc-lexico.l"
+{ return OP_AND; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 25 "calc-lexico.l"
-{ printf("OR : %s\n", yytext); return OP_OR; }
+#line 31 "calc-lexico.l"
+{ return OP_OR; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 26 "calc-lexico.l"
-{ printf("IGUAL : %s\n", yytext); return OP_IGUAL; }
+#line 32 "calc-lexico.l"
+{ return OP_IGUAL; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 27 "calc-lexico.l"
-{ printf("TRUE : %s\n", yytext); return TRUE; }
+#line 33 "calc-lexico.l"
+{ return TRUE; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 28 "calc-lexico.l"
-{ printf("FALSE : %s\n", yytext); return FALSE; }
+#line 34 "calc-lexico.l"
+{ return FALSE; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 29 "calc-lexico.l"
-{ printf("NUMERO : %s\n", yytext); yylval.num = atoi(yytext); return NUMERO; }
+#line 35 "calc-lexico.l"
+{ yylval.num = atoi(yytext); return NUMERO; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 30 "calc-lexico.l"
-{ printf("ID : %s\n", yytext); yylval.str = strdup(yytext); if (!yylval.str) { perror("strdup"); exit(1); } return ID; }
+#line 36 "calc-lexico.l"
+{ yylval.str = strdup(yytext); if (!yylval.str) { perror("strdup"); exit(1); } return ID; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 31 "calc-lexico.l"
-{ printf("RESTA : %s\n", yytext); return OP_RESTA; }
+#line 37 "calc-lexico.l"
+{ return OP_RESTA; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 32 "calc-lexico.l"
-{ printf("SUMA : %s\n", yytext); return OP_SUMA; }
+#line 38 "calc-lexico.l"
+{ return OP_SUMA; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 33 "calc-lexico.l"
-{ printf("PARA : %s\n", yytext); return PARA; }
+#line 39 "calc-lexico.l"
+{ return PARA; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 34 "calc-lexico.l"
-{ printf("PARC : %s\n", yytext); return PARC; }
+#line 40 "calc-lexico.l"
+{ return PARC; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 35 "calc-lexico.l"
-{ printf("LLAA : %s\n", yytext); return LLAA; }
+#line 41 "calc-lexico.l"
+{ return LLAA; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 36 "calc-lexico.l"
-{ printf("LLAC : %s\n", yytext); return LLAC; }
+#line 42 "calc-lexico.l"
+{ return LLAC; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 37 "calc-lexico.l"
-{ printf("CORA : %s\n", yytext); return CORA; }
+#line 43 "calc-lexico.l"
+{ return CORA; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 38 "calc-lexico.l"
-{ printf("CORC : %s\n", yytext); return CORC; }
+#line 44 "calc-lexico.l"
+{ return CORC; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 39 "calc-lexico.l"
-{ printf("ASIGN : %s\n", yytext); return OP_ASIGN; }
+#line 45 "calc-lexico.l"
+{ return OP_ASIGN; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 40 "calc-lexico.l"
-{ printf("OP_MULT : %s\n", yytext); return OP_MULT; }
+#line 46 "calc-lexico.l"
+{ return OP_MULT; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 41 "calc-lexico.l"
-{ printf("DIV : %s\n", yytext); return OP_DIV; }
+#line 47 "calc-lexico.l"
+{ return OP_DIV; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 42 "calc-lexico.l"
-{ printf("PYC : %s\n", yytext); return PYC; }
+#line 48 "calc-lexico.l"
+{ return PYC; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 43 "calc-lexico.l"
-{ printf("COMA : %s\n", yytext); return COMA; }
+#line 49 "calc-lexico.l"
+{ return COMA; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 44 "calc-lexico.l"
-{ printf("MAYOR : %s\n", yytext); return OP_MAYOR; }
+#line 50 "calc-lexico.l"
+{ return OP_MAYOR; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 45 "calc-lexico.l"
-{ printf("MENOR : %s\n", yytext); return OP_MENOR; }
+#line 51 "calc-lexico.l"
+{ return OP_MENOR; }
 	YY_BREAK
 case 28:
 /* rule 28 can match eol */
 YY_RULE_SETUP
-#line 47 "calc-lexico.l"
+#line 53 "calc-lexico.l"
 ;   /* Ignorar espacios en blanco */
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 48 "calc-lexico.l"
+#line 54 "calc-lexico.l"
 ;   /* Ignorar caracteres no reconocidos */
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 50 "calc-lexico.l"
+#line 56 "calc-lexico.l"
 ECHO;
 	YY_BREAK
-#line 959 "lex.yy.c"
+#line 965 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1973,9 +1979,10 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 50 "calc-lexico.l"
+#line 56 "calc-lexico.l"
 
 
+/* Función para errores sintácticos */
 void yyerror(const char *s) {
     fprintf(stderr, "-> ERROR Sintactico en la linea %d: %s\n", yylineno, s);
 }
